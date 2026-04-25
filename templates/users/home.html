@@ -1,0 +1,234 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Resume Analyzer</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:Poppins;
+background:#000;
+color:#00ffff;
+display:flex;
+}
+
+/* Sidebar */
+
+.sidebar{
+width:230px;
+padding:25px;
+border-right:1px solid #00ffff;
+}
+
+.sidebar a{
+display:block;
+padding:12px;
+margin:10px 0;
+text-decoration:none;
+color:#00ffff;
+}
+
+.sidebar a:hover{
+background:#00ffff;
+color:black;
+}
+
+/* Main */
+
+.main{
+flex:1;
+padding:40px;
+}
+
+/* Hero */
+
+.hero{
+padding:30px;
+border-radius:15px;
+background:linear-gradient(135deg,#2563eb,#38bdf8);
+color:white;
+margin-bottom:25px;
+}
+
+/* Grid */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+/* Cards */
+
+.card{
+padding:25px;
+border-radius:15px;
+border:1px solid #00ffff;
+text-align:center;
+transition:0.3s;
+}
+
+.card:hover{
+box-shadow:0 0 15px #00ffff;
+transform:translateY(-5px);
+}
+
+.card i{
+font-size:28px;
+margin-bottom:10px;
+}
+
+.card a{
+color:inherit;
+text-decoration:none;
+}
+
+/* Activity */
+
+.activity{
+margin-top:30px;
+padding:20px;
+border:1px solid #00ffff;
+border-radius:12px;
+}
+
+.activity h3{
+margin-bottom:15px;
+}
+
+.activity li{
+margin-bottom:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+
+<h2>🤖 Resume AI</h2>
+
+<a href="{% url 'upload' %}"><i class="fa fa-upload"></i> Upload Resume</a>
+<a href="{% url 'history' %}"><i class="fa fa-file"></i> My Resumes</a>
+
+{% if latest_resume %}
+<a href="{{ latest_resume.file.url }}"><i class="fa fa-eye"></i> Latest Resume</a>
+{% endif %}
+
+<a href="{% url 'logout' %}"><i class="fa fa-sign-out-alt"></i> Logout</a>
+
+</div>
+
+<!-- Main -->
+<div class="main">
+
+<!-- Hero -->
+<div class="hero">
+<h1>Welcome Back 👋 {{ request.user.username }}</h1>
+<p>Upload resumes and analyze AI insights</p>
+</div>
+
+<!-- Quick Stats -->
+<div class="grid">
+
+<div class="card">
+<i class="fa fa-star"></i>
+<h3>Latest Score</h3>
+<p>{{ latest_resume.score|default:"No Resume" }}%</p>
+</div>
+
+<div class="card">
+<i class="fa fa-check"></i>
+<h3>Matched Skills</h3>
+<p>{{ latest_resume.matched_skills|length|default:0 }}</p>
+</div>
+
+<div class="card">
+<i class="fa fa-times"></i>
+<h3>Missing Skills</h3>
+<p>{{ latest_resume.missing_skills|length|default:0 }}</p>
+</div>
+
+<div class="card">
+<i class="fa fa-briefcase"></i>
+<h3>Recommended Roles</h3>
+<p>
+{% if latest_resume.recommended_roles %}
+{{ latest_resume.recommended_roles.0 }}
+{% else %}
+No Data
+{% endif %}
+</p>
+</div>
+
+</div>
+
+<!-- Quick Actions -->
+<div class="grid" style="margin-top:25px;">
+
+<div class="card">
+<a href="{% url 'upload' %}">
+<i class="fa fa-upload"></i>
+<h3>Upload Resume</h3>
+</a>
+</div>
+
+{% if latest_resume %}
+<div class="card">
+<a href="{% url 'download_report' latest_resume.id %}">
+<i class="fa fa-download"></i>
+<h3>Download Report</h3>
+</a>
+</div>
+{% endif %}
+
+<div class="card">
+<a href="{% url 'history' %}">
+<i class="fa fa-chart-line"></i>
+<h3>View Analysis</h3>
+</a>
+</div>
+
+</div>
+
+<!-- AI Suggestions -->
+{% if latest_resume.suggestions %}
+<div class="activity">
+
+<h3>💡 AI Improvement Suggestions</h3>
+
+<ul>
+{% for s in latest_resume.suggestions %}
+<li>{{ s }}</li>
+{% endfor %}
+</ul>
+
+</div>
+{% endif %}
+
+<!-- Activity Logs -->
+{% if activities %}
+<div class="activity">
+
+<h3>📜 Recent Activity</h3>
+
+<ul>
+{% for act in activities %}
+<li>{{ act.action }} - {{ act.timestamp }}</li>
+{% endfor %}
+</ul>
+
+</div>
+{% endif %}
+
+</div>
+
+</body>
+</html>

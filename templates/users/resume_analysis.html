@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f6f9;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            width: 400px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>Resume Match Dashboard 📊</h2>
+    <h3 style="text-align:center;">Match Score: {{ score }}%</h3>
+
+    <div class="chart-container">
+        <canvas id="skillChart"></canvas>
+    </div>
+</div>
+
+<div class="card">
+    <h3>✅ Matched Skills</h3>
+    <ul>
+        {% for skill in matched %}
+            <li>{{ skill }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <h3>❌ Missing Skills</h3>
+    <ul>
+        {% for skill in missing %}
+            <li>{{ skill }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <h3>💡 Suggestions</h3>
+    <ul>
+        {% for suggestion in suggestions %}
+            <li>{{ suggestion }}</li>
+        {% empty %}
+            <p>Your resume looks strong!</p>
+        {% endfor %}
+    </ul>
+</div>
+
+<br>
+<div style="text-align:center;">
+    <a href="{% url 'home' %}">⬅ Back to Home</a>
+</div>
+
+<script>
+    const ctx = document.getElementById('skillChart');
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Matched Skills', 'Missing Skills'],
+            datasets: [{
+                data: [{{ matched|length }}, {{ missing|length }}],
+                backgroundColor: ['#36A2EB', '#FF6384']
+            }]
+        }
+    });
+</script>
+
+</body>
+</html>

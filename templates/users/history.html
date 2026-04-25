@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Resume Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:Poppins;
+background:linear-gradient(120deg,#020617,#0f172a);
+color:white;
+}
+
+/* Container */
+.container{
+max-width:1100px;
+margin:50px auto;
+padding:20px;
+}
+
+/* Title */
+.title{
+text-align:center;
+font-size:32px;
+margin-bottom:30px;
+font-weight:600;
+}
+
+/* Top Controls */
+.controls{
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+margin-bottom:30px;
+justify-content:space-between;
+}
+
+.controls input,
+.controls select{
+padding:10px;
+border-radius:8px;
+border:none;
+outline:none;
+font-family:Poppins;
+}
+
+/* Resume Grid */
+.resume-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
+}
+
+/* Resume Card */
+.resume-card{
+background:#1e293b;
+padding:20px;
+border-radius:15px;
+transition:0.3s;
+box-shadow:0 4px 20px rgba(0,0,0,0.4);
+}
+
+.resume-card:hover{
+transform:translateY(-6px);
+}
+
+/* Resume Name */
+.resume-name{
+font-weight:600;
+font-size:18px;
+margin-bottom:10px;
+}
+
+/* Info */
+.info{
+color:#94a3b8;
+font-size:14px;
+margin:6px 0;
+}
+
+/* Score Badge */
+.score{
+background:#2563eb;
+padding:4px 10px;
+border-radius:8px;
+margin-left:6px;
+}
+
+/* Skill Chips */
+.skills{
+margin-top:8px;
+}
+
+.skill{
+display:inline-block;
+background:#0ea5e9;
+padding:4px 8px;
+border-radius:6px;
+font-size:12px;
+margin:3px;
+}
+
+/* Chart */
+.chart-preview img{
+width:100%;
+border-radius:10px;
+margin-top:12px;
+}
+
+/* Buttons */
+.actions{
+margin-top:15px;
+}
+
+.btn{
+display:inline-block;
+padding:7px 14px;
+border-radius:8px;
+text-decoration:none;
+margin-right:8px;
+font-size:14px;
+transition:0.3s;
+}
+
+.view{background:#38bdf8;color:white;}
+.download{background:#10b981;color:white;}
+.delete{background:#ef4444;color:white;}
+
+.btn:hover{
+opacity:0.85;
+}
+
+/* Pagination */
+.pagination{
+text-align:center;
+margin-top:40px;
+}
+
+.pagination button{
+margin:5px;
+padding:8px 14px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* Back */
+.back{
+text-align:center;
+margin-top:30px;
+}
+
+.back a{
+color:#38bdf8;
+text-decoration:none;
+font-size:16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="title">📂 Resume Analytics Dashboard</div>
+
+<!-- Controls -->
+<div class="controls">
+
+<input type="text" id="searchBox" placeholder="🔍 Search Resume...">
+
+<select id="scoreFilter">
+<option value="">Filter By Score</option>
+<option value="80">Above 80%</option>
+<option value="60">Above 60%</option>
+<option value="40">Above 40%</option>
+</select>
+
+<select id="sortSelect">
+<option value="new">Newest</option>
+<option value="old">Oldest</option>
+<option value="score">Highest Score</option>
+</select>
+
+</div>
+
+<!-- Resume Grid -->
+<div class="resume-grid" id="resumeGrid">
+
+{% for resume in resumes %}
+
+<div class="resume-card"
+data-name="{{ resume.file.name }}"
+data-score="{{ resume.score }}"
+data-date="{{ resume.uploaded_at|date:'U' }}">
+
+<div class="resume-name">
+📄 {{ resume.file.name|cut:"resumes/" }}
+</div>
+
+<div class="info">
+📊 Score:
+<span class="score">{{ resume.score }}%</span>
+</div>
+
+<div class="info">
+⏱ Uploaded: {{ resume.uploaded_at }}
+</div>
+
+<!-- Skill Preview SAFE -->
+{% if resume.matched_skills %}
+<div class="skills">
+<strong>Matched Skills:</strong>
+{% for skill in resume.matched_skills|slice:":5" %}
+<span class="skill">{{ skill }}</span>
+{% endfor %}
+</div>
+{% endif %}
+
+<!-- Chart Preview SAFE -->
+{% if resume.chart %}
+<div class="chart-preview">
+<img src="data:image/png;base64,{{ resume.chart }}">
+</div>
+{% endif %}
+
+<div class="actions">
+
+<a href="{{ resume.file.url }}" target="_blank" class="btn view">
+👁 View
+</a>
+
+<a href="{{ resume.file.url }}" download class="btn download">
+⬇ Download
+</a>
+
+<a href="#" class="btn delete">
+🗑 Delete
+</a>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<!-- Pagination -->
+<div class="pagination">
+<button onclick="changePage(-1)">Prev</button>
+<button onclick="changePage(1)">Next</button>
+</div>
+
+<div class="back">
+<a href="{% url 'home' %}">← Back Home</a>
+</div>
+
+</div>
+
+<script>
+
+const cards=[...document.querySelectorAll(".resume-card")];
+let page=0;
+const perPage=6;
+
+function render(){
+cards.forEach((card,i)=>{
+card.style.display=(i>=page*perPage && i<(page+1)*perPage)?"block":"none";
+});
+}
+render();
+
+function changePage(dir){
+page=Math.max(0,page+dir);
+render();
+}
+
+/* SEARCH */
+document.getElementById("searchBox").onkeyup=e=>{
+let val=e.target.value.toLowerCase();
+
+cards.forEach(card=>{
+card.style.display=
+card.dataset.name.toLowerCase().includes(val)
+? "block":"none";
+});
+};
+
+/* FILTER */
+document.getElementById("scoreFilter").onchange=e=>{
+let val=e.target.value;
+
+cards.forEach(card=>{
+if(!val || card.dataset.score>=val)
+card.style.display="block";
+else
+card.style.display="none";
+});
+};
+
+/* SORT */
+document.getElementById("sortSelect").onchange=e=>{
+let type=e.target.value;
+
+cards.sort((a,b)=>{
+if(type==="score") return b.dataset.score-a.dataset.score;
+if(type==="old") return a.dataset.date-b.dataset.date;
+return b.dataset.date-a.dataset.date;
+});
+
+document.getElementById("resumeGrid").append(...cards);
+};
+
+</script>
+
+</body>
+</html>

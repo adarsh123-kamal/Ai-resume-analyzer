@@ -1,0 +1,309 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Resume Analyzer</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+
+body{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#020024,#090979,#00d4ff);
+overflow:hidden;
+animation:fadePage 0.8s ease;
+}
+
+@keyframes fadePage{
+from{opacity:0;}
+to{opacity:1;}
+}
+
+#particles-js{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+.wrapper{
+width:95%;
+max-width:1150px;
+display:flex;
+border-radius:25px;
+overflow:hidden;
+backdrop-filter:blur(25px);
+box-shadow:0 0 60px rgba(0,0,0,0.6);
+}
+
+.hero{
+flex:1;
+background:linear-gradient(160deg,#00c6ff,#0072ff);
+padding:60px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+color:white;
+position:relative;
+}
+
+.hero::after{
+content:"";
+position:absolute;
+inset:0;
+background:radial-gradient(circle at 20% 40%, rgba(255,255,255,0.2), transparent 60%);
+}
+
+.hero h1{font-size:38px;margin-bottom:20px;}
+.hero p{opacity:.9;line-height:1.6;margin-bottom:30px;}
+.hero img{width:80%;animation:float 4s ease-in-out infinite;}
+
+@keyframes float{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-18px);}
+100%{transform:translateY(0px);}
+}
+
+.login-panel{
+flex:1;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(30px);
+padding:60px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.login-box{
+width:100%;
+max-width:360px;
+color:white;
+}
+
+.subtitle{font-size:14px;opacity:.8;margin-bottom:25px;}
+
+.input-group{
+position:relative;
+margin-bottom:22px;
+}
+
+.input-group input{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:none;
+background:rgba(255,255,255,0.15);
+color:white;
+outline:none;
+caret-color:#00c6ff;
+}
+
+.input-group input:focus{
+background:rgba(255,255,255,0.22);
+box-shadow:0 0 18px rgba(0,198,255,0.6);
+}
+
+.input-group label{
+position:absolute;
+top:50%;
+left:15px;
+transform:translateY(-50%);
+color:#ccc;
+font-size:14px;
+transition:all 0.25s ease;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown)+label{
+top:-10px;
+font-size:12px;
+color:#00c6ff;
+}
+
+.input-group i{
+position:absolute;
+right:12px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+}
+
+.login-btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+background:linear-gradient(90deg,#00c6ff,#0072ff);
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:.3s;
+box-shadow:0 0 20px rgba(0,198,255,0.5);
+margin-top:10px;
+}
+
+.login-btn:hover{
+transform:translateY(-2px);
+box-shadow:0 0 30px rgba(0,198,255,0.9);
+}
+
+.divider{
+text-align:center;
+margin:18px 0;
+font-size:12px;
+opacity:0.6;
+position:relative;
+}
+
+.divider::before,
+.divider::after{
+content:"";
+position:absolute;
+top:50%;
+width:40%;
+height:1px;
+background:rgba(255,255,255,0.2);
+}
+
+.divider::before{ left:0; }
+.divider::after{ right:0; }
+
+.social{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+}
+
+.social button{
+padding:12px;
+border:none;
+border-radius:10px;
+color:white;
+cursor:pointer;
+font-weight:600;
+transition:0.3s;
+}
+
+.google{ background:#ea4335; }
+.linkedin{ background:#0077b5; }
+.github{ background:#24292e; }
+.facebook{ background:#1877f2; }
+
+.social button:hover{
+transform:scale(1.07);
+box-shadow:0 0 20px rgba(255,255,255,0.3);
+}
+
+.links{
+margin-top:20px;
+text-align:center;
+font-size:13px;
+}
+
+.links a{
+display:block;
+margin-top:8px;
+color:#ddd;
+text-decoration:none;
+}
+
+.links a:hover{ color:#00c6ff; }
+
+@media(max-width:900px){
+.wrapper{flex-direction:column;}
+.hero{display:none;}
+}
+</style>
+</head>
+
+<body>
+
+<div id="particles-js"></div>
+
+<div class="wrapper">
+
+<div class="hero">
+<img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png">
+<h1>AI Resume Analyzer</h1>
+<p>Upload resumes, detect skills, and match candidates using powerful AI insights.</p>
+</div>
+
+<div class="login-panel">
+<div class="login-box">
+
+<h2>Welcome Back 👋</h2>
+<p class="subtitle">Login to continue</p>
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="input-group">
+<input type="text" name="username" placeholder=" " required>
+<label>Username</label>
+</div>
+
+<div class="input-group">
+<input type="password" id="password" name="password" placeholder=" " required>
+<label>Password</label>
+<i class="fa fa-eye" onclick="togglePassword()"></i>
+</div>
+
+<button type="submit" class="login-btn">Login</button>
+
+<div class="divider">OR CONTINUE WITH</div>
+
+<div class="social">
+
+<button type="button" class="google"
+onclick="window.location.href='{% provider_login_url 'google' %}'">
+<i class="fab fa-google"></i> Google
+</button>
+
+
+<button type="button" class="github"
+onclick="window.location.href='{% provider_login_url 'github' %}'">
+<i class="fab fa-github"></i> GitHub
+</button>
+
+
+</div>
+
+<div class="links">
+<a href="{% url 'forgot_password' %}">Forgot Password?</a>
+<a href="{% url 'register' %}">Create Account</a>
+</div>
+
+</form>
+</div>
+</div>
+</div>
+
+<script>
+function togglePassword(){
+let p=document.getElementById("password");
+p.type=p.type==="password"?"text":"password";
+}
+
+particlesJS("particles-js",{
+particles:{
+number:{value:70},
+size:{value:2},
+move:{speed:0.8},
+line_linked:{enable:true},
+color:{value:"#ffffff"}
+}
+});
+</script>
+
+</body>
+</html>

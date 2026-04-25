@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Resume Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:'Inter',sans-serif;
+background:radial-gradient(circle at top left,#0f172a,#020617);
+color:white;
+}
+
+/* ---------- WRAPPER ---------- */
+
+.wrapper{
+max-width:1300px;
+margin:60px auto;
+padding:0 40px;
+}
+
+/* ---------- HEADER ---------- */
+
+.header{
+font-size:32px;
+font-weight:700;
+margin-bottom:50px;
+text-align:center;
+letter-spacing:1px;
+}
+
+/* ---------- SCORE GRID ---------- */
+
+.score-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:30px;
+margin-bottom:60px;
+}
+
+.card{
+background:linear-gradient(145deg,#0f172a,#111827);
+padding:35px;
+border-radius:22px;
+box-shadow:0 20px 60px rgba(0,0,0,0.5);
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 25px 60px rgba(0,255,255,0.15);
+}
+
+.score{
+font-size:38px;
+font-weight:700;
+margin-top:10px;
+}
+
+/* ---------- CHART SECTION ---------- */
+
+.chart-box{
+background:linear-gradient(145deg,#0f172a,#111827);
+padding:70px;
+border-radius:30px;
+text-align:center;
+margin-bottom:60px;
+box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+.progress-wrapper{
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.progress-ring{
+position:relative;
+}
+
+.progress-text{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+text-align:center;
+}
+
+.progress-text span{
+font-size:48px;
+font-weight:700;
+color:white;
+}
+
+.progress-text p{
+margin-top:10px;
+font-size:14px;
+color:#94a3b8;
+}
+
+/* ---------- SECTION ---------- */
+
+.section{
+background:linear-gradient(145deg,#0f172a,#111827);
+padding:30px;
+border-radius:22px;
+box-shadow:0 15px 40px rgba(0,0,0,0.5);
+margin-bottom:30px;
+}
+
+.section h3{
+margin-bottom:20px;
+font-weight:600;
+}
+
+/* ---------- SKILL TAGS ---------- */
+
+.tag{
+display:inline-block;
+padding:8px 16px;
+border-radius:30px;
+margin:6px;
+font-size:14px;
+font-weight:600;
+letter-spacing:0.5px;
+}
+
+.matched{
+background:rgba(34,197,94,0.15);
+color:#22c55e;
+border:1px solid rgba(34,197,94,0.4);
+}
+
+.missing{
+background:rgba(239,68,68,0.15);
+color:#ef4444;
+border:1px solid rgba(239,68,68,0.4);
+}
+
+/* ---------- BUTTONS ---------- */
+
+.btn{
+padding:16px 32px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
+font-size:15px;
+transition:0.3s;
+}
+
+.download{
+background:linear-gradient(90deg,#06b6d4,#3b82f6);
+color:white;
+}
+
+.download:hover{
+transform:translateY(-3px);
+box-shadow:0 15px 30px rgba(59,130,246,0.4);
+}
+
+.resume-link{
+display:block;
+margin-bottom:20px;
+text-align:center;
+color:#3b82f6;
+text-decoration:none;
+font-weight:600;
+}
+
+.center{
+text-align:center;
+}
+
+ul{
+padding-left:20px;
+color:#cbd5e1;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="header">
+AI Resume Analytics Dashboard 📊
+</div>
+
+<!-- SCORE CARDS -->
+<div class="score-grid">
+
+<div class="card">
+Match Score
+<div class="score" style="color:#3b82f6;">
+{{ resume.score }}%
+</div>
+</div>
+
+<div class="card">
+Skill Coverage
+<div class="score" style="color:#22c55e;">
+{{ resume.coverage }}%
+</div>
+</div>
+
+<div class="card">
+Skill Gap
+<div class="score" style="color:#ef4444;">
+{{ resume.gap }}%
+</div>
+</div>
+
+</div>
+
+<!-- CIRCULAR PROGRESS -->
+<div class="chart-box">
+
+<div class="progress-wrapper">
+
+<div class="progress-ring">
+
+<svg width="260" height="260">
+
+<defs>
+<linearGradient id="grad">
+<stop offset="0%" stop-color="#06b6d4"/>
+<stop offset="100%" stop-color="#3b82f6"/>
+</linearGradient>
+</defs>
+
+<circle cx="130" cy="130" r="105"
+stroke="#1e293b"
+stroke-width="20"
+fill="none"/>
+
+<circle cx="130" cy="130" r="105"
+stroke="url(#grad)"
+stroke-width="20"
+fill="none"
+stroke-dasharray="659"
+stroke-dashoffset="{{ 659|floatformat:0|add:"-"|add:resume.score }}"
+stroke-linecap="round"
+transform="rotate(-90 130 130)"/>
+
+</svg>
+
+<div class="progress-text">
+<span>{{ resume.score }}%</span>
+<p>Resume Match</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ROLES -->
+<div class="section">
+<h3>🎯 Recommended Job Roles</h3>
+
+<ul>
+{% for role in resume.recommended_roles %}
+<li>{{ role }}</li>
+{% empty %}
+<li>No roles detected</li>
+{% endfor %}
+</ul>
+
+</div>
+
+<!-- MATCHED SKILLS -->
+<div class="section">
+<h3>✅ Matched Skills</h3>
+
+{% for skill in resume.matched_skills %}
+<span class="tag matched">{{ skill }}</span>
+{% empty %}
+<p>No matched skills</p>
+{% endfor %}
+
+</div>
+
+<!-- MISSING SKILLS -->
+<div class="section">
+<h3>❌ Missing Skills</h3>
+
+{% for skill in resume.missing_skills %}
+<span class="tag missing">{{ skill }}</span>
+{% empty %}
+<p>No missing skills 🎉</p>
+{% endfor %}
+
+</div>
+
+<!-- LEARNING -->
+<div class="section">
+<h3>📚 Learning Resources</h3>
+
+<ul>
+{% for skill in resume.missing_skills %}
+<li>
+{{ skill }} →
+<a href="https://www.youtube.com/results?search_query={{ skill }} tutorial" target="_blank" style="color:#3b82f6;">
+Learn Here
+</a>
+</li>
+{% empty %}
+<li>No learning required 🚀</li>
+{% endfor %}
+</ul>
+
+</div>
+
+<!-- RESUME + DOWNLOAD -->
+<div class="center">
+
+{% if resume %}
+<a href="{{ resume.file.url }}" target="_blank" class="resume-link">
+View Uploaded Resume
+</a>
+
+<a href="{% url 'download_report' resume.id %}">
+<button class="btn download">Download Analysis Report</button>
+</a>
+{% endif %}
+
+</div>
+
+</div>
+
+</body>
+</html>

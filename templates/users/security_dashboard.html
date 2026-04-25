@@ -1,0 +1,17 @@
+<h2>Security Dashboard</h2>
+
+<table border="1">
+<tr>
+<th>User</th>
+<th>Email Verified</th>
+<th>Failed Attempts</th>
+</tr>
+
+{% for u in users %}
+<tr>
+<td>{{ u.user.username }}</td>
+<td>{{ u.email_verified }}</td>
+<td>{{ u.failed_attempts }}</td>
+</tr>
+{% endfor %}
+</table>

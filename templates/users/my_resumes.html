@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Resumes</title>
+</head>
+<body>
+
+<h2>My Uploaded Resumes</h2>
+
+<ul>
+    {% for resume in resumes %}
+        <li>
+            <a href="{{ resume.file.url }}">{{ resume.file.name }}</a>
+        </li>
+    {% empty %}
+        <p>No resumes uploaded yet.</p>
+    {% endfor %}
+</ul>
+
+<br>
+<a href="{% url 'home' %}">Back to Home</a>
+
+</body>
+</html>
